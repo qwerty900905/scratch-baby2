@@ -109,38 +109,51 @@
     </div>
   </div>
 
-  <!-- ✅ 아기 얼굴 (참고 이미지 스타일로 재현) -->
-  <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
-    <rect width="300" height="400" fill="#FFEFF4"/>
+  <!-- ✅ 아기 얼굴 (머리카락이 머리 안으로 들어오게 clip 적용) -->
+<svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="400" fill="#FFEFF4"/>
 
-    <!-- 얼굴 -->
-    <circle cx="150" cy="180" r="78" fill="#FFE0C6"/>
+  <defs>
+    <!-- 얼굴 원 클립: 머리카락이 원 밖으로 안 나가게 -->
+    <clipPath id="headClip">
+      <circle cx="150" cy="180" r="78"/>
+    </clipPath>
+  </defs>
 
-    <!-- 귀 -->
-    <ellipse cx="75" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
-    <ellipse cx="225" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
+  <!-- 얼굴 -->
+  <circle cx="150" cy="180" r="78" fill="#FFE0C6"/>
 
-    <!-- 앞머리 -->
-    <path d="M140 95 C132 88 132 78 140 72" stroke="#7A4A2E" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <path d="M155 95 C148 86 150 76 160 72" stroke="#7A4A2E" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <path d="M170 95 C164 86 168 78 176 74" stroke="#7A4A2E" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- 귀 -->
+  <ellipse cx="75" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
+  <ellipse cx="225" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
 
-    <!-- 눈 -->
-    <circle cx="125" cy="170" r="5.5" fill="#3A2A20"/>
-    <circle cx="175" cy="170" r="5.5" fill="#3A2A20"/>
+  <!-- ✅ 머리카락: 얼굴 원 안쪽으로만 보이도록 clipPath 적용 -->
+  <g clip-path="url(#headClip)">
+    <!-- 레퍼런스처럼 머리 윗부분 안쪽에 살짝 내려오게 -->
+    <path d="M140 116 C134 112 134 104 140 98"
+          stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M155 116 C149 110 150 102 160 98"
+          stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M170 116 C165 110 168 104 176 100"
+          stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
+  </g>
 
-    <!-- 볼 -->
-    <circle cx="110" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
-    <circle cx="190" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
+  <!-- 눈 -->
+  <circle cx="125" cy="170" r="5.5" fill="#3A2A20"/>
+  <circle cx="175" cy="170" r="5.5" fill="#3A2A20"/>
 
-    <!-- 코 -->
-    <circle cx="150" cy="182" r="2.2" fill="#E0B199"/>
+  <!-- 볼 -->
+  <circle cx="110" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
+  <circle cx="190" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
 
-    <!-- 쪽쪽이 -->
-    <circle cx="150" cy="210" r="18" fill="#6EC9F5"/>
-    <circle cx="150" cy="210" r="10" fill="#AEE4FA"/>
-    <circle cx="150" cy="210" r="4.5" fill="#5AB6E5"/>
-  </svg>
+  <!-- 코 -->
+  <circle cx="150" cy="182" r="2.2" fill="#E0B199"/>
+
+  <!-- 쪽쪽이 -->
+  <circle cx="150" cy="210" r="18" fill="#6EC9F5"/>
+  <circle cx="150" cy="210" r="10" fill="#AEE4FA"/>
+  <circle cx="150" cy="210" r="4.5" fill="#5AB6E5"/>
+ </svg>
 
   <!-- 복권 -->
   <div class="ticket" id="ticket">
