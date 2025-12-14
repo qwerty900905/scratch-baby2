@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>스크래치 복권</title>
+<style>
+body{margin:0;background:#f4f6f8;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:system-ui,-apple-system,"Apple SD Gothic Neo";}
+.card{position:relative;width:90vw;max-width:380px;aspect-ratio:3/4;border-radius:20px;background:#fff;box-shadow:0 12px 30px rgba(0,0,0,.15);overflow:hidden;touch-action:none;}
+.reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;z-index:1;}
+.reveal span{font-size:28px;font-weight:800;background:#fff;padding:14px 18px;border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.15);white-space:pre-line;}
+.baby{position:absolute;inset:0;z-index:0;}
+canvas{position:absolute;inset:0;z-index:2;}
+</style>
+</head>
+<body>
+<div class="card">
+  <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+    <rect width="300" height="400" fill="#FFEFF4"/>
+    <circle cx="150" cy="120" r="55" fill="#FFD6C9"/>
+    <circle cx="132" cy="115" r="5"/><circle cx="168" cy="115" r="5"/>
+    <path d="M135 135 Q150 145 165 135" stroke="#333" stroke-width="3" fill="none"/>
+    <rect x="90" y="170" width="120" height="110" rx="30" fill="#CDE6FF"/>
+    <rect x="70" y="240" width="160" height="90" rx="14" fill="#BFC5CF"/>
+    <text x="150" y="295" text-anchor="middle" font-size="16" fill="#555" font-weight="700">SCRATCH!</text>
+  </svg>
+
+  <div class="reveal">
+    <span>🎉 축하해요!\n원하는 문구로 바꿔요 🎉</span>
+  </div>
+
+  <canvas id="scratch"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById("scratch");
+const ctx = canvas.getContext("2d");
+let isDown = false;
+const BRUSH = 22;
+
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  canvas.width = r.width;
+  canvas.height = r.height;
+
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillStyle = "#9FA6B2";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "rgba(0,0,0,.5)";
+  ctx.font = "bold 18px system-ui";
+  ctx.textAlign = "center";
+  ctx.fillText("여기를 긁어보세요", canvas.width / 2, canvas.height / 2);
+
+  ctx.globalCompositeOperation = "destination-out";
+}
+
+function pos(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+function scratch(x, y) {
+  ctx.beginPath();
+  ctx.arc(x, y, BRUSH, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+canvas.addEventListener("pointerdown", e => {
+  isDown = true;
+  const p = pos(e);
+  scratch(p.x, p.y);
+});
+
+canvas.addEventListener("pointermove", e => {
+  if (!isDown) return;
+  const p = pos(e);
+  scratch(p.x, p.y);
+});
+
+["pointerup","pointerleave","pointercancel"].forEach(ev =>
+  canvas.addEventListener(ev, () => isDown = false)
+);
+
+resize();
+window.addEventListener("resize", resize);
+</script>
+</body>
+</html>
