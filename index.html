@@ -51,7 +51,11 @@
   .girl{ color:#FF8FB5; }
   .rest{ color:#111; }
 
-  .baby{ position:absolute; inset:0; }
+  .baby{
+    position:absolute;
+    inset:0;
+    z-index:0;
+  }
 
   /* ===== 복권 ===== */
   .ticket{
@@ -83,7 +87,11 @@
     border-radius:16px;
   }
 
-  canvas{ position:absolute; inset:0; touch-action:none; }
+  canvas{
+    position:absolute;
+    inset:0;
+    touch-action:none;
+  }
 
   .hint{
     position:absolute;
@@ -109,51 +117,51 @@
     </div>
   </div>
 
-  <!-- ✅ 아기 얼굴 (머리카락이 머리 안으로 들어오게 clip 적용) -->
-<svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
-  <rect width="300" height="400" fill="#FFEFF4"/>
+  <!-- ===== 아기 얼굴 (레퍼런스 스타일, 머리카락 클립 적용) ===== -->
+  <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+    <!-- 배경 -->
+    <rect width="300" height="400" fill="#FFEFF4"/>
 
-  <defs>
-    <!-- 얼굴 원 클립: 머리카락이 원 밖으로 안 나가게 -->
-    <clipPath id="headClip">
-      <circle cx="150" cy="180" r="78"/>
-    </clipPath>
-  </defs>
+    <defs>
+      <!-- 얼굴 영역 클리핑 -->
+      <clipPath id="headClip">
+        <circle cx="150" cy="180" r="78"/>
+      </clipPath>
+    </defs>
 
-  <!-- 얼굴 -->
-  <circle cx="150" cy="180" r="78" fill="#FFE0C6"/>
+    <!-- 얼굴 -->
+    <circle cx="150" cy="180" r="78" fill="#FFE0C6"/>
 
-  <!-- 귀 -->
-  <ellipse cx="75" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
-  <ellipse cx="225" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
+    <!-- 귀 -->
+    <ellipse cx="75" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
+    <ellipse cx="225" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
 
-  <!-- ✅ 머리카락: 얼굴 원 안쪽으로만 보이도록 clipPath 적용 -->
-  <g clip-path="url(#headClip)">
-    <!-- 레퍼런스처럼 머리 윗부분 안쪽에 살짝 내려오게 -->
-    <path d="M140 116 C134 112 134 104 140 98"
-          stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <path d="M155 116 C149 110 150 102 160 98"
-          stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <path d="M170 116 C165 110 168 104 176 100"
-          stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
-  </g>
+    <!-- 머리카락 3가닥 (얼굴 안쪽으로만 보이게) -->
+    <g clip-path="url(#headClip)">
+      <path d="M138 120 C132 114 132 104 138 98"
+            stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M150 120 C144 112 146 102 156 98"
+            stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M162 120 C156 112 160 104 168 100"
+            stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
+    </g>
 
-  <!-- 눈 -->
-  <circle cx="125" cy="170" r="5.5" fill="#3A2A20"/>
-  <circle cx="175" cy="170" r="5.5" fill="#3A2A20"/>
+    <!-- 눈 -->
+    <circle cx="125" cy="170" r="5.5" fill="#3A2A20"/>
+    <circle cx="175" cy="170" r="5.5" fill="#3A2A20"/>
 
-  <!-- 볼 -->
-  <circle cx="110" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
-  <circle cx="190" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
+    <!-- 볼 -->
+    <circle cx="110" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
+    <circle cx="190" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
 
-  <!-- 코 -->
-  <circle cx="150" cy="182" r="2.2" fill="#E0B199"/>
+    <!-- 코 -->
+    <circle cx="150" cy="182" r="2.2" fill="#E0B199"/>
 
-  <!-- 쪽쪽이 -->
-  <circle cx="150" cy="210" r="18" fill="#6EC9F5"/>
-  <circle cx="150" cy="210" r="10" fill="#AEE4FA"/>
-  <circle cx="150" cy="210" r="4.5" fill="#5AB6E5"/>
- </svg>
+    <!-- 쪽쪽이 -->
+    <circle cx="150" cy="210" r="18" fill="#6EC9F5"/>
+    <circle cx="150" cy="210" r="10" fill="#AEE4FA"/>
+    <circle cx="150" cy="210" r="4.5" fill="#5AB6E5"/>
+  </svg>
 
   <!-- 복권 -->
   <div class="ticket" id="ticket">
@@ -188,9 +196,23 @@
   }
 
   let down=false;
-  canvas.addEventListener("pointerdown",e=>{down=true;const p=pos(e);ctx.beginPath();ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);ctx.fill();});
-  canvas.addEventListener("pointermove",e=>{if(!down)return;const p=pos(e);ctx.beginPath();ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);ctx.fill();});
-  ["pointerup","pointerleave","pointercancel"].forEach(ev=>canvas.addEventListener(ev,()=>down=false));
+  canvas.addEventListener("pointerdown",e=>{
+    down=true;
+    const p=pos(e);
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);
+    ctx.fill();
+  });
+  canvas.addEventListener("pointermove",e=>{
+    if(!down)return;
+    const p=pos(e);
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);
+    ctx.fill();
+  });
+  ["pointerup","pointerleave","pointercancel"].forEach(ev =>
+    canvas.addEventListener(ev,()=>down=false)
+  );
 
   resize();
 })();
