@@ -21,9 +21,9 @@
     width:90vw;
     max-width:380px;
     aspect-ratio: 3 / 4;
-    border-radius:20px;
+    border-radius:28px;
     background:#fff;
-    box-shadow:0 12px 30px rgba(0,0,0,.15);
+    box-shadow:0 18px 40px rgba(0,0,0,.16);
     overflow:hidden;
   }
 
@@ -39,19 +39,18 @@
     user-select:none;
   }
   .title .t1{
-    font-size:50px;          /* ✅ 너가 바꾼 값 반영 */
+    font-size:50px;          /* ✅ 사용자 설정 반영 */
     font-weight:900;
     color:#111;
     letter-spacing:-0.02em;
   }
   .title .t2{
-    margin-top:6px;          /* ✅ 너가 바꾼 값 반영 */
-    font-size:50px;          /* ✅ 너가 바꾼 값 반영 */
+    margin-top:6px;          /* ✅ 사용자 설정 반영 */
+    font-size:50px;          /* ✅ 사용자 설정 반영 */
     font-weight:900;
     letter-spacing:-0.02em;
   }
 
-  /* 제목 색 */
   .boy{ color:#8DBBFF; }     /* 옅은 파란색 */
   .girl{ color:#FF8FB5; }    /* 분홍색 */
   .rest{ color:#111; }
@@ -88,10 +87,9 @@
     user-select:none;
   }
 
-  /* ✅ 고추 대신 텍스트(제목 Boy 스타일과 맞춤) */
   .revealText{
     font-weight:900;
-    font-size:50px;          /* 제목과 같은 크기 느낌 */
+    font-size:50px;
     letter-spacing:-0.02em;
     line-height:1;
     text-align:center;
@@ -135,57 +133,85 @@
       </div>
     </div>
 
-    <!-- 배경: 더 자연스러운 플랫 일러스트 느낌의 아기 SVG(내가 새로 그린 벡터) -->
+    <!-- 배경 + 아기 얼굴(요청한 스타일로) -->
     <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <!-- 배경 -->
       <rect width="300" height="400" fill="#FFEFF4"/>
 
-      <!-- 머리(조금 더 자연스럽게) -->
-      <circle cx="150" cy="118" r="58" fill="#FFD6C9"/>
-      <!-- 귀 -->
-      <circle cx="95" cy="122" r="10" fill="#F6C2B1" opacity="0.9"/>
-      <circle cx="205" cy="122" r="10" fill="#F6C2B1" opacity="0.9"/>
+      <defs>
+        <!-- 얼굴 그라데이션 -->
+        <radialGradient id="faceGrad" cx="45%" cy="35%" r="70%">
+          <stop offset="0%" stop-color="#FFE6D6"/>
+          <stop offset="70%" stop-color="#FFD6BF"/>
+          <stop offset="100%" stop-color="#F6C3AA"/>
+        </radialGradient>
 
-      <!-- 머리카락 -->
-      <path d="M112 88 C126 62, 171 60, 190 86 C173 74, 130 75, 112 88 Z" fill="#2E2E2E" opacity="0.85"/>
-      <path d="M122 84 C132 70, 154 66, 170 76" stroke="#2E2E2E" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+        <!-- 볼터치 블러 -->
+        <filter id="softBlur" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.2"/>
+        </filter>
 
-      <!-- 눈(부드럽게) -->
-      <path d="M122 118 Q132 110 142 118" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M158 118 Q168 110 178 118" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- 살짝 그림자 -->
+        <filter id="drop" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+          <feOffset in="blur" dx="0" dy="6" result="off"/>
+          <feColorMatrix in="off" type="matrix"
+            values="0 0 0 0 0
+                    0 0 0 0 0
+                    0 0 0 0 0
+                    0 0 0 .18 0" result="shadow"/>
+          <feMerge>
+            <feMergeNode in="shadow"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
 
-      <!-- 볼 -->
-      <circle cx="118" cy="137" r="9" fill="#FFB3C7" opacity="0.55"/>
-      <circle cx="182" cy="137" r="9" fill="#FFB3C7" opacity="0.55"/>
+      <!-- 아기 얼굴 위치(원하는대로 위/아래 조절 가능) -->
+      <g transform="translate(0,10)" filter="url(#drop)">
+        <!-- 얼굴 -->
+        <circle cx="150" cy="170" r="62" fill="url(#faceGrad)"/>
 
-      <!-- 코 -->
-      <circle cx="150" cy="132" r="2.5" fill="#D99A8A" opacity="0.8"/>
+        <!-- 귀 -->
+        <ellipse cx="96" cy="176" rx="14" ry="18" fill="#F6C3AA" opacity="0.95"/>
+        <ellipse cx="204" cy="176" rx="14" ry="18" fill="#F6C3AA" opacity="0.95"/>
 
-      <!-- 입 -->
-      <path d="M138 146 Q150 156 162 146" stroke="#333" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- 볼터치 -->
+        <g filter="url(#softBlur)" opacity="0.65">
+          <circle cx="120" cy="198" r="16" fill="#F39AAE"/>
+          <circle cx="180" cy="198" r="16" fill="#F39AAE"/>
+        </g>
 
-      <!-- 목 -->
-      <rect x="138" y="165" width="24" height="18" rx="10" fill="#F6C2B1" opacity="0.95"/>
+        <!-- 눈(점처럼) -->
+        <circle cx="132" cy="178" r="6" fill="#111"/>
+        <circle cx="168" cy="178" r="6" fill="#111"/>
 
-      <!-- 몸 -->
-      <rect x="76" y="176" width="148" height="160" rx="44" fill="#CDE6FF"/>
+        <!-- 코(아주 옅게) -->
+        <circle cx="150" cy="190" r="2.2" fill="#D79D8B" opacity="0.55"/>
+
+        <!-- 입(작은 미소) -->
+        <path d="M146 202 Q150 207 154 202" stroke="#111" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+        <!-- 앞머리 한 가닥(그림처럼 동글 꼬불) -->
+        <path d="M150 128
+                 C140 132, 142 146, 154 146
+                 C166 146, 166 162, 150 162"
+              stroke="#111" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- 몸(심플하게) -->
+      <rect x="70" y="230" width="160" height="125" rx="40" fill="#CDE6FF"/>
 
       <!-- 팔(복권 들고 있는 느낌) -->
-      <rect x="50" y="240" width="72" height="46" rx="23" fill="#FFD6C9" opacity="0.96"/>
-      <rect x="178" y="240" width="72" height="46" rx="23" fill="#FFD6C9" opacity="0.96"/>
-
-      <!-- 손끝 살짝 -->
-      <circle cx="70" cy="270" r="8" fill="#F6C2B1" opacity="0.9"/>
-      <circle cx="230" cy="270" r="8" fill="#F6C2B1" opacity="0.9"/>
+      <rect x="45" y="275" width="75" height="52" rx="26" fill="#FFD6BF"/>
+      <rect x="180" y="275" width="75" height="52" rx="26" fill="#FFD6BF"/>
     </svg>
 
     <!-- 복권(스크래치 영역) -->
     <div class="ticket" id="ticket">
-      <!-- ✅ 고추 대신: Boy 텍스트(제목 Boy 색/크기와 통일) -->
       <div class="reveal">
         <div id="resultText" class="revealText"></div>
       </div>
-
       <canvas id="scratch"></canvas>
     </div>
 
@@ -194,8 +220,8 @@
 
 <script>
 (() => {
-  // ✅ 여기만 바꾸면 결과가 바뀜: "boy" 또는 "girl"
-  const RESULT = "boy"; // "girl" 로 바꾸면 Girl이 나와요
+  // ✅ 결과 고정: "boy" 또는 "girl"
+  const RESULT = "boy"; // "girl" 로 바꾸면 Girl
 
   const ticket = document.getElementById("ticket");
   const canvas = document.getElementById("scratch");
@@ -203,13 +229,10 @@
   const BRUSH = 22;
   const COVER_COLOR = "#9FA6B2";
 
-  // 결과 텍스트 세팅 (제목 색과 동일 클래스 적용)
+  // 결과 텍스트(제목 색과 동일)
   const resultEl = document.getElementById("resultText");
-  if (RESULT === "girl") {
-    resultEl.innerHTML = '<span class="girl">Girl</span>';
-  } else {
-    resultEl.innerHTML = '<span class="boy">Boy</span>';
-  }
+  if (RESULT === "girl") resultEl.innerHTML = '<span class="girl">Girl</span>';
+  else resultEl.innerHTML = '<span class="boy">Boy</span>';
 
   let isDown = false;
   let dpr = Math.max(1, window.devicePixelRatio || 1);
