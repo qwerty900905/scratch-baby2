@@ -27,7 +27,7 @@
     overflow:hidden;
   }
 
-  /* ===== 상단 제목(요구사항 1) ===== */
+  /* ===== 상단 제목 ===== */
   .title{
     position:absolute;
     top:18px;
@@ -35,33 +35,35 @@
     right:16px;
     z-index:3;
     text-align:center;
-    line-height:1.15;
+    line-height:1.05;
     user-select:none;
   }
   .title .t1{
-    font-size:50px;
+    font-size:50px;          /* ✅ 너가 바꾼 값 반영 */
     font-weight:900;
     color:#111;
     letter-spacing:-0.02em;
   }
   .title .t2{
-    margin-top:6px;
-    font-size:50px;
+    margin-top:6px;          /* ✅ 너가 바꾼 값 반영 */
+    font-size:50px;          /* ✅ 너가 바꾼 값 반영 */
     font-weight:900;
     letter-spacing:-0.02em;
   }
-  .boy{ color:#8DBBFF; }   /* 옅은 파란색 */
-  .girl{ color:#FF8FB5; }  /* 분홍색 */
+
+  /* 제목 색 */
+  .boy{ color:#8DBBFF; }     /* 옅은 파란색 */
+  .girl{ color:#FF8FB5; }    /* 분홍색 */
   .rest{ color:#111; }
 
-  /* ===== 아기 그림(SVG) ===== */
+  /* ===== 아기 SVG ===== */
   .baby{
     position:absolute;
     inset:0;
     z-index:0;
   }
 
-  /* ===== 복권(스크래치) 영역: SCRATCH! 있던 곳으로 이동 (요구사항 3) ===== */
+  /* ===== 복권(스크래치) 영역 ===== */
   .ticket{
     position:absolute;
     left:50%;
@@ -75,7 +77,7 @@
     background:#BFC5CF;
   }
 
-  /* 긁으면 보이는 내용(요구사항 4: 고추 모양) */
+  /* 긁으면 보이는 내용 */
   .reveal{
     position:absolute;
     inset:0;
@@ -86,16 +88,27 @@
     user-select:none;
   }
 
-  /* 캔버스는 복권 영역에만 */
+  /* ✅ 고추 대신 텍스트(제목 Boy 스타일과 맞춤) */
+  .revealText{
+    font-weight:900;
+    font-size:50px;          /* 제목과 같은 크기 느낌 */
+    letter-spacing:-0.02em;
+    line-height:1;
+    text-align:center;
+    background: rgba(255,255,255,0.82);
+    border-radius:16px;
+    padding: 14px 18px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.12);
+  }
+
   canvas{
     position:absolute;
     inset:0;
     width:100%;
     height:100%;
-    touch-action:none; /* 모바일에서 긁을 때 스크롤 방지 */
+    touch-action:none;
   }
 
-  /* 아래 안내문(선택) */
   .hint{
     position:absolute;
     bottom:14px;
@@ -112,7 +125,7 @@
 
 <body>
   <div class="card">
-    <!-- 제목 (여기 제목 넣기) -->
+    <!-- 제목 -->
     <div class="title">
       <div class="t1">짱이의 성별은?</div>
       <div class="t2">
@@ -122,47 +135,57 @@
       </div>
     </div>
 
-    <!-- 배경: 아기(얼굴 제거) + 몸 + 복권을 들고 있는 느낌 -->
+    <!-- 배경: 더 자연스러운 플랫 일러스트 느낌의 아기 SVG(내가 새로 그린 벡터) -->
     <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <!-- 배경 -->
       <rect width="300" height="400" fill="#FFEFF4"/>
 
-      <!-- (요구사항 2) 얼굴 요소 제거: 머리/눈/입 없음 -->
+      <!-- 머리(조금 더 자연스럽게) -->
+      <circle cx="150" cy="118" r="58" fill="#FFD6C9"/>
+      <!-- 귀 -->
+      <circle cx="95" cy="122" r="10" fill="#F6C2B1" opacity="0.9"/>
+      <circle cx="205" cy="122" r="10" fill="#F6C2B1" opacity="0.9"/>
+
+      <!-- 머리카락 -->
+      <path d="M112 88 C126 62, 171 60, 190 86 C173 74, 130 75, 112 88 Z" fill="#2E2E2E" opacity="0.85"/>
+      <path d="M122 84 C132 70, 154 66, 170 76" stroke="#2E2E2E" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+
+      <!-- 눈(부드럽게) -->
+      <path d="M122 118 Q132 110 142 118" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M158 118 Q168 110 178 118" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+      <!-- 볼 -->
+      <circle cx="118" cy="137" r="9" fill="#FFB3C7" opacity="0.55"/>
+      <circle cx="182" cy="137" r="9" fill="#FFB3C7" opacity="0.55"/>
+
+      <!-- 코 -->
+      <circle cx="150" cy="132" r="2.5" fill="#D99A8A" opacity="0.8"/>
+
+      <!-- 입 -->
+      <path d="M138 146 Q150 156 162 146" stroke="#333" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+      <!-- 목 -->
+      <rect x="138" y="165" width="24" height="18" rx="10" fill="#F6C2B1" opacity="0.95"/>
 
       <!-- 몸 -->
-      <rect x="80" y="150" width="140" height="150" rx="38" fill="#CDE6FF"/>
+      <rect x="76" y="176" width="148" height="160" rx="44" fill="#CDE6FF"/>
 
       <!-- 팔(복권 들고 있는 느낌) -->
-      <rect x="55" y="220" width="60" height="40" rx="20" fill="#FFD6C9" opacity="0.9"/>
-      <rect x="185" y="220" width="60" height="40" rx="20" fill="#FFD6C9" opacity="0.9"/>
+      <rect x="50" y="240" width="72" height="46" rx="23" fill="#FFD6C9" opacity="0.96"/>
+      <rect x="178" y="240" width="72" height="46" rx="23" fill="#FFD6C9" opacity="0.96"/>
 
-      <!-- 복권(배경용, 실제 스크래치는 아래 HTML ticket에서 함) -->
-      <rect x="60" y="250" width="180" height="100" rx="16" fill="#D6DBE3" opacity="0.55"/>
+      <!-- 손끝 살짝 -->
+      <circle cx="70" cy="270" r="8" fill="#F6C2B1" opacity="0.9"/>
+      <circle cx="230" cy="270" r="8" fill="#F6C2B1" opacity="0.9"/>
     </svg>
 
     <!-- 복권(스크래치 영역) -->
     <div class="ticket" id="ticket">
-      <!-- 긁으면 보이는 것: 가운데 고추(야채) -->
+      <!-- ✅ 고추 대신: Boy 텍스트(제목 Boy 색/크기와 통일) -->
       <div class="reveal">
-        <!-- 고추 SVG -->
-        <svg width="92" height="92" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <!-- 줄기 -->
-          <path d="M62 16 C55 15, 50 18, 48 24 C55 23, 60 25, 62 30 C66 26, 70 22, 76 22 C74 18, 69 16, 62 16 Z"
-                fill="#2E7D32"/>
-          <!-- 고추 몸통 -->
-          <path d="M62 28
-                   C40 28, 26 44, 28 68
-                   C30 92, 44 106, 62 106
-                   C80 106, 94 92, 96 68
-                   C98 44, 84 28, 62 28 Z"
-                fill="#E53935"/>
-          <!-- 하이라이트 -->
-          <path d="M48 40 C40 48, 38 60, 40 74 C41 84, 46 92, 52 96"
-                stroke="rgba(255,255,255,0.55)" stroke-width="8" fill="none" stroke-linecap="round"/>
-        </svg>
+        <div id="resultText" class="revealText"></div>
       </div>
 
-      <!-- 스크래치 레이어 -->
       <canvas id="scratch"></canvas>
     </div>
 
@@ -171,11 +194,22 @@
 
 <script>
 (() => {
+  // ✅ 여기만 바꾸면 결과가 바뀜: "boy" 또는 "girl"
+  const RESULT = "boy"; // "girl" 로 바꾸면 Girl이 나와요
+
   const ticket = document.getElementById("ticket");
   const canvas = document.getElementById("scratch");
   const ctx = canvas.getContext("2d");
-  const BRUSH = 22;          // 긁는 굵기
+  const BRUSH = 22;
   const COVER_COLOR = "#9FA6B2";
+
+  // 결과 텍스트 세팅 (제목 색과 동일 클래스 적용)
+  const resultEl = document.getElementById("resultText");
+  if (RESULT === "girl") {
+    resultEl.innerHTML = '<span class="girl">Girl</span>';
+  } else {
+    resultEl.innerHTML = '<span class="boy">Boy</span>';
+  }
 
   let isDown = false;
   let dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -184,7 +218,6 @@
     const r = ticket.getBoundingClientRect();
     dpr = Math.max(1, window.devicePixelRatio || 1);
 
-    // 고해상도 대응
     canvas.width = Math.floor(r.width * dpr);
     canvas.height = Math.floor(r.height * dpr);
     canvas.style.width = r.width + "px";
@@ -198,7 +231,6 @@
     const w = ticket.getBoundingClientRect().width;
     const h = ticket.getBoundingClientRect().height;
 
-    // 덮개
     ctx.globalCompositeOperation = "source-over";
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = COVER_COLOR;
@@ -216,26 +248,12 @@
     }
     ctx.globalAlpha = 1;
 
-    // (요구사항 1) "여기를 긁어보세요"는 제목으로 대체했으므로 여기엔 넣지 않음
-    // 대신 복권 중앙에 아주 작은 안내만 원하면 아래 주석 해제 가능
-    /*
-    ctx.fillStyle = "rgba(0,0,0,.45)";
-    ctx.font = "800 14px system-ui, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("긁어보세요", w/2, h/2);
-    */
-
-    // 긁기는 지우기 모드
     ctx.globalCompositeOperation = "destination-out";
   }
 
   function getPos(e) {
     const r = canvas.getBoundingClientRect();
-    return {
-      x: (e.clientX - r.left),
-      y: (e.clientY - r.top)
-    };
+    return { x: (e.clientX - r.left), y: (e.clientY - r.top) };
   }
 
   function scratchAt(x, y) {
