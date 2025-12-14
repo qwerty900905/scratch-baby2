@@ -3,87 +3,267 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>스크래치 복권</title>
+<title>짱이의 성별은?</title>
+
 <style>
-body{margin:0;background:#f4f6f8;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:system-ui,-apple-system,"Apple SD Gothic Neo";}
-.card{position:relative;width:90vw;max-width:380px;aspect-ratio:3/4;border-radius:20px;background:#fff;box-shadow:0 12px 30px rgba(0,0,0,.15);overflow:hidden;touch-action:none;}
-.reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;z-index:1;}
-.reveal span{font-size:28px;font-weight:800;background:#fff;padding:14px 18px;border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.15);white-space:pre-line;}
-.baby{position:absolute;inset:0;z-index:0;}
-canvas{position:absolute;inset:0;z-index:2;}
+  body{
+    margin:0;
+    background:#f4f6f8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  }
+
+  .card{
+    position:relative;
+    width:90vw;
+    max-width:380px;
+    aspect-ratio: 3 / 4;
+    border-radius:20px;
+    background:#fff;
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+    overflow:hidden;
+  }
+
+  /* ===== 상단 제목(요구사항 1) ===== */
+  .title{
+    position:absolute;
+    top:18px;
+    left:16px;
+    right:16px;
+    z-index:3;
+    text-align:center;
+    line-height:1.15;
+    user-select:none;
+  }
+  .title .t1{
+    font-size:22px;
+    font-weight:900;
+    color:#111;
+    letter-spacing:-0.02em;
+  }
+  .title .t2{
+    margin-top:6px;
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:-0.02em;
+  }
+  .boy{ color:#8DBBFF; }   /* 옅은 파란색 */
+  .girl{ color:#FF8FB5; }  /* 분홍색 */
+  .rest{ color:#111; }
+
+  /* ===== 아기 그림(SVG) ===== */
+  .baby{
+    position:absolute;
+    inset:0;
+    z-index:0;
+  }
+
+  /* ===== 복권(스크래치) 영역: SCRATCH! 있던 곳으로 이동 (요구사항 3) ===== */
+  .ticket{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:44px;
+    width:78%;
+    height:24%;
+    border-radius:16px;
+    overflow:hidden;
+    z-index:2;
+    background:#BFC5CF;
+  }
+
+  /* 긁으면 보이는 내용(요구사항 4: 고추 모양) */
+  .reveal{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  /* 캔버스는 복권 영역에만 */
+  canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    touch-action:none; /* 모바일에서 긁을 때 스크롤 방지 */
+  }
+
+  /* 아래 안내문(선택) */
+  .hint{
+    position:absolute;
+    bottom:14px;
+    left:16px;
+    right:16px;
+    text-align:center;
+    font-size:12px;
+    color:#666;
+    z-index:3;
+    user-select:none;
+  }
 </style>
 </head>
-<body>
-<div class="card">
-  <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
-    <rect width="300" height="400" fill="#FFEFF4"/>
-    <circle cx="150" cy="120" r="55" fill="#FFD6C9"/>
-    <circle cx="132" cy="115" r="5"/><circle cx="168" cy="115" r="5"/>
-    <path d="M135 135 Q150 145 165 135" stroke="#333" stroke-width="3" fill="none"/>
-    <rect x="90" y="170" width="120" height="110" rx="30" fill="#CDE6FF"/>
-    <rect x="70" y="240" width="160" height="90" rx="14" fill="#BFC5CF"/>
-    <text x="150" y="295" text-anchor="middle" font-size="16" fill="#555" font-weight="700">SCRATCH!</text>
-  </svg>
 
-  <div class="reveal">
-    <span>🎉 축하해요!\n원하는 문구로 바꿔요 🎉</span>
+<body>
+  <div class="card">
+    <!-- 제목 (여기 제목 넣기) -->
+    <div class="title">
+      <div class="t1">짱이의 성별은?</div>
+      <div class="t2">
+        <span class="boy">Boy</span>
+        <span class="rest"> or </span>
+        <span class="girl">Girl</span>
+      </div>
+    </div>
+
+    <!-- 배경: 아기(얼굴 제거) + 몸 + 복권을 들고 있는 느낌 -->
+    <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- 배경 -->
+      <rect width="300" height="400" fill="#FFEFF4"/>
+
+      <!-- (요구사항 2) 얼굴 요소 제거: 머리/눈/입 없음 -->
+
+      <!-- 몸 -->
+      <rect x="80" y="150" width="140" height="150" rx="38" fill="#CDE6FF"/>
+
+      <!-- 팔(복권 들고 있는 느낌) -->
+      <rect x="55" y="220" width="60" height="40" rx="20" fill="#FFD6C9" opacity="0.9"/>
+      <rect x="185" y="220" width="60" height="40" rx="20" fill="#FFD6C9" opacity="0.9"/>
+
+      <!-- 복권(배경용, 실제 스크래치는 아래 HTML ticket에서 함) -->
+      <rect x="60" y="250" width="180" height="100" rx="16" fill="#D6DBE3" opacity="0.55"/>
+    </svg>
+
+    <!-- 복권(스크래치 영역) -->
+    <div class="ticket" id="ticket">
+      <!-- 긁으면 보이는 것: 가운데 고추(야채) -->
+      <div class="reveal">
+        <!-- 고추 SVG -->
+        <svg width="92" height="92" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- 줄기 -->
+          <path d="M62 16 C55 15, 50 18, 48 24 C55 23, 60 25, 62 30 C66 26, 70 22, 76 22 C74 18, 69 16, 62 16 Z"
+                fill="#2E7D32"/>
+          <!-- 고추 몸통 -->
+          <path d="M62 28
+                   C40 28, 26 44, 28 68
+                   C30 92, 44 106, 62 106
+                   C80 106, 94 92, 96 68
+                   C98 44, 84 28, 62 28 Z"
+                fill="#E53935"/>
+          <!-- 하이라이트 -->
+          <path d="M48 40 C40 48, 38 60, 40 74 C41 84, 46 92, 52 96"
+                stroke="rgba(255,255,255,0.55)" stroke-width="8" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- 스크래치 레이어 -->
+      <canvas id="scratch"></canvas>
+    </div>
+
+    <div class="hint">복권 부분만 손가락으로 긁어보세요</div>
   </div>
 
-  <canvas id="scratch"></canvas>
-</div>
-
 <script>
-const canvas = document.getElementById("scratch");
-const ctx = canvas.getContext("2d");
-let isDown = false;
-const BRUSH = 22;
+(() => {
+  const ticket = document.getElementById("ticket");
+  const canvas = document.getElementById("scratch");
+  const ctx = canvas.getContext("2d");
+  const BRUSH = 22;          // 긁는 굵기
+  const COVER_COLOR = "#9FA6B2";
 
-function resize() {
-  const r = canvas.getBoundingClientRect();
-  canvas.width = r.width;
-  canvas.height = r.height;
+  let isDown = false;
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
 
-  ctx.globalCompositeOperation = "source-over";
-  ctx.fillStyle = "#9FA6B2";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function resizeCanvas() {
+    const r = ticket.getBoundingClientRect();
+    dpr = Math.max(1, window.devicePixelRatio || 1);
 
-  ctx.fillStyle = "rgba(0,0,0,.5)";
-  ctx.font = "bold 18px system-ui";
-  ctx.textAlign = "center";
-  ctx.fillText("여기를 긁어보세요", canvas.width / 2, canvas.height / 2);
+    // 고해상도 대응
+    canvas.width = Math.floor(r.width * dpr);
+    canvas.height = Math.floor(r.height * dpr);
+    canvas.style.width = r.width + "px";
+    canvas.style.height = r.height + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  ctx.globalCompositeOperation = "destination-out";
-}
+    drawCover();
+  }
 
-function pos(e) {
-  const r = canvas.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
+  function drawCover() {
+    const w = ticket.getBoundingClientRect().width;
+    const h = ticket.getBoundingClientRect().height;
 
-function scratch(x, y) {
-  ctx.beginPath();
-  ctx.arc(x, y, BRUSH, 0, Math.PI * 2);
-  ctx.fill();
-}
+    // 덮개
+    ctx.globalCompositeOperation = "source-over";
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = COVER_COLOR;
+    ctx.fillRect(0, 0, w, h);
 
-canvas.addEventListener("pointerdown", e => {
-  isDown = true;
-  const p = pos(e);
-  scratch(p.x, p.y);
-});
+    // 복권 느낌 패턴
+    ctx.globalAlpha = 0.14;
+    ctx.lineWidth = 2;
+    for (let y = -h; y < h * 2; y += 12) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y + w);
+      ctx.strokeStyle = "#000";
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
 
-canvas.addEventListener("pointermove", e => {
-  if (!isDown) return;
-  const p = pos(e);
-  scratch(p.x, p.y);
-});
+    // (요구사항 1) "여기를 긁어보세요"는 제목으로 대체했으므로 여기엔 넣지 않음
+    // 대신 복권 중앙에 아주 작은 안내만 원하면 아래 주석 해제 가능
+    /*
+    ctx.fillStyle = "rgba(0,0,0,.45)";
+    ctx.font = "800 14px system-ui, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("긁어보세요", w/2, h/2);
+    */
 
-["pointerup","pointerleave","pointercancel"].forEach(ev =>
-  canvas.addEventListener(ev, () => isDown = false)
-);
+    // 긁기는 지우기 모드
+    ctx.globalCompositeOperation = "destination-out";
+  }
 
-resize();
-window.addEventListener("resize", resize);
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    return {
+      x: (e.clientX - r.left),
+      y: (e.clientY - r.top)
+    };
+  }
+
+  function scratchAt(x, y) {
+    ctx.beginPath();
+    ctx.arc(x, y, BRUSH, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  canvas.addEventListener("pointerdown", (e) => {
+    isDown = true;
+    canvas.setPointerCapture?.(e.pointerId);
+    const p = getPos(e);
+    scratchAt(p.x, p.y);
+  });
+
+  canvas.addEventListener("pointermove", (e) => {
+    if (!isDown) return;
+    const p = getPos(e);
+    scratchAt(p.x, p.y);
+  });
+
+  ["pointerup", "pointercancel", "pointerleave"].forEach(ev => {
+    canvas.addEventListener(ev, () => { isDown = false; });
+  });
+
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+})();
 </script>
 </body>
 </html>
