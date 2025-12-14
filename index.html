@@ -27,7 +27,7 @@
     overflow:hidden;
   }
 
-  /* ===== 상단 제목 ===== */
+  /* ===== 제목 ===== */
   .title{
     position:absolute;
     top:18px;
@@ -36,33 +36,24 @@
     z-index:3;
     text-align:center;
     line-height:1.05;
-    user-select:none;
   }
   .title .t1{
-    font-size:50px;          /* ✅ 사용자 설정 반영 */
+    font-size:50px;
     font-weight:900;
     color:#111;
-    letter-spacing:-0.02em;
   }
   .title .t2{
-    margin-top:6px;          /* ✅ 사용자 설정 반영 */
-    font-size:50px;          /* ✅ 사용자 설정 반영 */
+    margin-top:6px;
+    font-size:50px;
     font-weight:900;
-    letter-spacing:-0.02em;
   }
-
-  .boy{ color:#8DBBFF; }     /* 옅은 파란색 */
-  .girl{ color:#FF8FB5; }    /* 분홍색 */
+  .boy{ color:#8DBBFF; }
+  .girl{ color:#FF8FB5; }
   .rest{ color:#111; }
 
-  /* ===== 아기 SVG ===== */
-  .baby{
-    position:absolute;
-    inset:0;
-    z-index:0;
-  }
+  .baby{ position:absolute; inset:0; }
 
-  /* ===== 복권(스크래치) 영역 ===== */
+  /* ===== 복권 ===== */
   .ticket{
     position:absolute;
     left:50%;
@@ -72,11 +63,10 @@
     height:24%;
     border-radius:16px;
     overflow:hidden;
-    z-index:2;
     background:#BFC5CF;
+    z-index:2;
   }
 
-  /* 긁으면 보이는 내용 */
   .reveal{
     position:absolute;
     inset:0;
@@ -84,28 +74,16 @@
     align-items:center;
     justify-content:center;
     pointer-events:none;
-    user-select:none;
   }
-
   .revealText{
-    font-weight:900;
     font-size:50px;
-    letter-spacing:-0.02em;
-    line-height:1;
-    text-align:center;
-    background: rgba(255,255,255,0.82);
+    font-weight:900;
+    background:rgba(255,255,255,.85);
+    padding:14px 18px;
     border-radius:16px;
-    padding: 14px 18px;
-    box-shadow: 0 10px 22px rgba(0,0,0,.12);
   }
 
-  canvas{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    touch-action:none;
-  }
+  canvas{ position:absolute; inset:0; touch-action:none; }
 
   .hint{
     position:absolute;
@@ -115,195 +93,93 @@
     text-align:center;
     font-size:12px;
     color:#666;
-    z-index:3;
-    user-select:none;
   }
 </style>
 </head>
 
 <body>
-  <div class="card">
-    <!-- 제목 -->
-    <div class="title">
-      <div class="t1">짱이의 성별은?</div>
-      <div class="t2">
-        <span class="boy">Boy</span>
-        <span class="rest"> or </span>
-        <span class="girl">Girl</span>
-      </div>
+<div class="card">
+  <!-- 제목 -->
+  <div class="title">
+    <div class="t1">짱이의 성별은?</div>
+    <div class="t2">
+      <span class="boy">Boy</span>
+      <span class="rest"> or </span>
+      <span class="girl">Girl</span>
     </div>
-
-    <!-- 배경 + 아기 얼굴(요청한 스타일로) -->
-    <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <!-- 배경 -->
-      <rect width="300" height="400" fill="#FFEFF4"/>
-
-      <defs>
-        <!-- 얼굴 그라데이션 -->
-        <radialGradient id="faceGrad" cx="45%" cy="35%" r="70%">
-          <stop offset="0%" stop-color="#FFE6D6"/>
-          <stop offset="70%" stop-color="#FFD6BF"/>
-          <stop offset="100%" stop-color="#F6C3AA"/>
-        </radialGradient>
-
-        <!-- 볼터치 블러 -->
-        <filter id="softBlur" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="2.2"/>
-        </filter>
-
-        <!-- 살짝 그림자 -->
-        <filter id="drop" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
-          <feOffset in="blur" dx="0" dy="6" result="off"/>
-          <feColorMatrix in="off" type="matrix"
-            values="0 0 0 0 0
-                    0 0 0 0 0
-                    0 0 0 0 0
-                    0 0 0 .18 0" result="shadow"/>
-          <feMerge>
-            <feMergeNode in="shadow"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
-
-      <!-- 아기 얼굴 위치(원하는대로 위/아래 조절 가능) -->
-      <g transform="translate(0,10)" filter="url(#drop)">
-        <!-- 얼굴 -->
-        <circle cx="150" cy="170" r="62" fill="url(#faceGrad)"/>
-
-        <!-- 귀 -->
-        <ellipse cx="96" cy="176" rx="14" ry="18" fill="#F6C3AA" opacity="0.95"/>
-        <ellipse cx="204" cy="176" rx="14" ry="18" fill="#F6C3AA" opacity="0.95"/>
-
-        <!-- 볼터치 -->
-        <g filter="url(#softBlur)" opacity="0.65">
-          <circle cx="120" cy="198" r="16" fill="#F39AAE"/>
-          <circle cx="180" cy="198" r="16" fill="#F39AAE"/>
-        </g>
-
-        <!-- 눈(점처럼) -->
-        <circle cx="132" cy="178" r="6" fill="#111"/>
-        <circle cx="168" cy="178" r="6" fill="#111"/>
-
-        <!-- 코(아주 옅게) -->
-        <circle cx="150" cy="190" r="2.2" fill="#D79D8B" opacity="0.55"/>
-
-        <!-- 입(작은 미소) -->
-        <path d="M146 202 Q150 207 154 202" stroke="#111" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-
-        <!-- 앞머리 한 가닥(그림처럼 동글 꼬불) -->
-        <path d="M150 128
-                 C140 132, 142 146, 154 146
-                 C166 146, 166 162, 150 162"
-              stroke="#111" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-      </g>
-
-      <!-- 몸(심플하게) -->
-      <rect x="70" y="230" width="160" height="125" rx="40" fill="#CDE6FF"/>
-
-      <!-- 팔(복권 들고 있는 느낌) -->
-      <rect x="45" y="275" width="75" height="52" rx="26" fill="#FFD6BF"/>
-      <rect x="180" y="275" width="75" height="52" rx="26" fill="#FFD6BF"/>
-    </svg>
-
-    <!-- 복권(스크래치 영역) -->
-    <div class="ticket" id="ticket">
-      <div class="reveal">
-        <div id="resultText" class="revealText"></div>
-      </div>
-      <canvas id="scratch"></canvas>
-    </div>
-
-    <div class="hint">복권 부분만 손가락으로 긁어보세요</div>
   </div>
+
+  <!-- ✅ 아기 얼굴 (참고 이미지 스타일로 재현) -->
+  <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+    <rect width="300" height="400" fill="#FFEFF4"/>
+
+    <!-- 얼굴 -->
+    <circle cx="150" cy="180" r="78" fill="#FFE0C6"/>
+
+    <!-- 귀 -->
+    <ellipse cx="75" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
+    <ellipse cx="225" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
+
+    <!-- 앞머리 -->
+    <path d="M140 95 C132 88 132 78 140 72" stroke="#7A4A2E" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M155 95 C148 86 150 76 160 72" stroke="#7A4A2E" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M170 95 C164 86 168 78 176 74" stroke="#7A4A2E" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+    <!-- 눈 -->
+    <circle cx="125" cy="170" r="5.5" fill="#3A2A20"/>
+    <circle cx="175" cy="170" r="5.5" fill="#3A2A20"/>
+
+    <!-- 볼 -->
+    <circle cx="110" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
+    <circle cx="190" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
+
+    <!-- 코 -->
+    <circle cx="150" cy="182" r="2.2" fill="#E0B199"/>
+
+    <!-- 쪽쪽이 -->
+    <circle cx="150" cy="210" r="18" fill="#6EC9F5"/>
+    <circle cx="150" cy="210" r="10" fill="#AEE4FA"/>
+    <circle cx="150" cy="210" r="4.5" fill="#5AB6E5"/>
+  </svg>
+
+  <!-- 복권 -->
+  <div class="ticket" id="ticket">
+    <div class="reveal">
+      <div id="resultText" class="revealText boy">Boy</div>
+    </div>
+    <canvas id="scratch"></canvas>
+  </div>
+
+  <div class="hint">복권 부분만 손가락으로 긁어보세요</div>
+</div>
 
 <script>
 (() => {
-  // ✅ 결과 고정: "boy" 또는 "girl"
-  const RESULT = "boy"; // "girl" 로 바꾸면 Girl
-
-  const ticket = document.getElementById("ticket");
   const canvas = document.getElementById("scratch");
   const ctx = canvas.getContext("2d");
+  const ticket = document.getElementById("ticket");
   const BRUSH = 22;
-  const COVER_COLOR = "#9FA6B2";
 
-  // 결과 텍스트(제목 색과 동일)
-  const resultEl = document.getElementById("resultText");
-  if (RESULT === "girl") resultEl.innerHTML = '<span class="girl">Girl</span>';
-  else resultEl.innerHTML = '<span class="boy">Boy</span>';
-
-  let isDown = false;
-  let dpr = Math.max(1, window.devicePixelRatio || 1);
-
-  function resizeCanvas() {
+  function resize(){
     const r = ticket.getBoundingClientRect();
-    dpr = Math.max(1, window.devicePixelRatio || 1);
-
-    canvas.width = Math.floor(r.width * dpr);
-    canvas.height = Math.floor(r.height * dpr);
-    canvas.style.width = r.width + "px";
-    canvas.style.height = r.height + "px";
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    drawCover();
-  }
-
-  function drawCover() {
-    const w = ticket.getBoundingClientRect().width;
-    const h = ticket.getBoundingClientRect().height;
-
-    ctx.globalCompositeOperation = "source-over";
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = COVER_COLOR;
-    ctx.fillRect(0, 0, w, h);
-
-    // 복권 느낌 패턴
-    ctx.globalAlpha = 0.14;
-    ctx.lineWidth = 2;
-    for (let y = -h; y < h * 2; y += 12) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y + w);
-      ctx.strokeStyle = "#000";
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
-
+    canvas.width = r.width;
+    canvas.height = r.height;
+    ctx.fillStyle = "#9FA6B2";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.globalCompositeOperation = "destination-out";
   }
 
-  function getPos(e) {
+  function pos(e){
     const r = canvas.getBoundingClientRect();
-    return { x: (e.clientX - r.left), y: (e.clientY - r.top) };
+    return {x:e.clientX-r.left,y:e.clientY-r.top};
   }
 
-  function scratchAt(x, y) {
-    ctx.beginPath();
-    ctx.arc(x, y, BRUSH, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  let down=false;
+  canvas.addEventListener("pointerdown",e=>{down=true;const p=pos(e);ctx.beginPath();ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);ctx.fill();});
+  canvas.addEventListener("pointermove",e=>{if(!down)return;const p=pos(e);ctx.beginPath();ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);ctx.fill();});
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>canvas.addEventListener(ev,()=>down=false));
 
-  canvas.addEventListener("pointerdown", (e) => {
-    isDown = true;
-    canvas.setPointerCapture?.(e.pointerId);
-    const p = getPos(e);
-    scratchAt(p.x, p.y);
-  });
-
-  canvas.addEventListener("pointermove", (e) => {
-    if (!isDown) return;
-    const p = getPos(e);
-    scratchAt(p.x, p.y);
-  });
-
-  ["pointerup", "pointercancel", "pointerleave"].forEach(ev => {
-    canvas.addEventListener(ev, () => { isDown = false; });
-  });
-
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas();
+  resize();
 })();
 </script>
 </body>
