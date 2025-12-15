@@ -101,12 +101,22 @@
     text-align:center;
     font-size:12px;
     color:#666;
+    z-index:3;
+  }
+
+  /* ===== 폭죽 ===== */
+  #confettiCanvas{
+    position:absolute;
+    inset:0;
+    z-index:6;
+    pointer-events:none;
   }
 </style>
 </head>
 
 <body>
 <div class="card">
+
   <!-- 제목 -->
   <div class="title">
     <div class="t1">짱이의 성별은?</div>
@@ -117,27 +127,22 @@
     </div>
   </div>
 
-  <!-- ===== 아기 얼굴 (scale 0.92 적용) ===== -->
+  <!-- 아기 얼굴 -->
   <svg class="baby" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
     <rect width="300" height="400" fill="#FFEFF4"/>
-
     <defs>
-      <!-- 얼굴 영역 클리핑 -->
       <clipPath id="headClip">
         <circle cx="150" cy="180" r="78"/>
       </clipPath>
     </defs>
 
-    <!-- 얼굴 전체를 그룹으로 묶고 8% 축소 + 정중앙 x150 y180이고 아기얼굴을 위에서 떨어져야해서 -28 살짝 아래 보정 -->
+    <!-- 얼굴 (정중앙 기준 축소 + 간격 보정) -->
     <g transform="translate(150 180) scale(0.92) translate(-150 -162)">
-      <!-- 얼굴 -->
       <circle cx="150" cy="180" r="78" fill="#FFE0C6"/>
 
-      <!-- 귀 -->
       <ellipse cx="75" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
       <ellipse cx="225" cy="185" rx="16" ry="22" fill="#FFD3B8"/>
 
-      <!-- 머리카락 3가닥 (얼굴 안쪽) -->
       <g clip-path="url(#headClip)">
         <path d="M138 120 C132 114 132 104 138 98"
               stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
@@ -147,18 +152,15 @@
               stroke="#7A4A2E" stroke-width="7" fill="none" stroke-linecap="round"/>
       </g>
 
-      <!-- 눈 -->
       <circle cx="125" cy="170" r="5.5" fill="#3A2A20"/>
       <circle cx="175" cy="170" r="5.5" fill="#3A2A20"/>
 
-      <!-- 볼 -->
       <circle cx="110" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
       <circle cx="190" cy="195" r="14" fill="#F6A5A5" opacity="0.65"/>
 
-      <!-- 코 -->
       <circle cx="150" cy="182" r="2.2" fill="#E0B199"/>
 
-      <!-- 쪽쪽이 -->
+      <!-- 쪽쪽이(파랑) -->
       <circle cx="150" cy="210" r="18" fill="#6EC9F5"/>
       <circle cx="150" cy="210" r="10" fill="#AEE4FA"/>
       <circle cx="150" cy="210" r="4.5" fill="#5AB6E5"/>
@@ -168,55 +170,134 @@
   <!-- 복권 -->
   <div class="ticket" id="ticket">
     <div class="reveal">
+      <!-- ✅ Boy 결과 -->
       <div id="resultText" class="revealText boy">Boy</div>
     </div>
     <canvas id="scratch"></canvas>
   </div>
+
+  <!-- 폭죽 -->
+  <canvas id="confettiCanvas"></canvas>
 
   <div class="hint">복권 부분만 손가락으로 긁어보세요</div>
 </div>
 
 <script>
 (() => {
-  const canvas = document.getElementById("scratch");
-  const ctx = canvas.getContext("2d");
-  const ticket = document.getElementById("ticket");
+  /* ===== 설정 ===== */
+  const THRESHOLD = 0.60;
+  const CHECK_EVERY_MS = 220;
   const BRUSH = 22;
 
-  function resize(){
+  /* 결과 확인 (Boy → 파란 폭죽) */
+  const resultEl = document.getElementById("resultText");
+  const palette = ["#8DBBFF","#A8CDFF","#C1DDFF","#D7E9FF","#EEF6FF"];
+
+  /* 스크래치 */
+  const canvas = document.getElementById("scratch");
+  const ctx = canvas.getContext("2d", { willReadFrequently:true });
+  const ticket = document.getElementById("ticket");
+
+  /* 폭죽 */
+  const confetti = document.getElementById("confettiCanvas");
+  const cctx = confetti.getContext("2d");
+
+  let down=false, fired=false, lastCheck=0;
+
+  function resizeAll(){
     const r = ticket.getBoundingClientRect();
     canvas.width = r.width;
     canvas.height = r.height;
-    ctx.fillStyle = "#9FA6B2";
+
+    const card = document.querySelector(".card").getBoundingClientRect();
+    confetti.width = card.width;
+    confetti.height = card.height;
+
+    ctx.globalCompositeOperation="source-over";
+    ctx.fillStyle="#9FA6B2";
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.globalCompositeOperation = "destination-out";
+    ctx.globalCompositeOperation="destination-out";
   }
 
   function pos(e){
-    const r = canvas.getBoundingClientRect();
+    const r=canvas.getBoundingClientRect();
     return {x:e.clientX-r.left,y:e.clientY-r.top};
   }
 
-  let down=false;
-  canvas.addEventListener("pointerdown",e=>{
-    down=true;
-    const p=pos(e);
+  function scratchAt(x,y){
     ctx.beginPath();
-    ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);
+    ctx.arc(x,y,BRUSH,0,Math.PI*2);
     ctx.fill();
+  }
+
+  function scratchedRatio(){
+    const img=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    let t=0;
+    for(let i=3;i<img.length;i+=4) if(img[i]===0) t++;
+    return t/(img.length/4);
+  }
+
+  function launchConfettiOnce(){
+    if(fired) return;
+    fired=true;
+
+    const W=confetti.width,H=confetti.height;
+    const pieces=[];
+    for(let i=0;i<160;i++){
+      pieces.push({
+        x:Math.random()*W,
+        y:-20-Math.random()*H*0.25,
+        vx:(Math.random()-0.5)*2.4,
+        vy:2.4+Math.random()*3.6,
+        r:3+Math.random()*4,
+        rot:Math.random()*Math.PI,
+        vr:(Math.random()-0.5)*0.25,
+        life:0,
+        maxLife:150+Math.random()*90,
+        color:palette[Math.floor(Math.random()*palette.length)]
+      });
+    }
+
+    function frame(){
+      cctx.clearRect(0,0,W,H);
+      for(const p of pieces){
+        p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life++; p.vy+=0.03;
+        cctx.fillStyle=p.color;
+        cctx.save();
+        cctx.translate(p.x,p.y);
+        cctx.rotate(p.rot);
+        cctx.fillRect(-p.r,-p.r,p.r*2,p.r*2);
+        cctx.restore();
+      }
+      if(pieces.some(p=>p.life<p.maxLife && p.y<H+40)){
+        requestAnimationFrame(frame);
+      }else{
+        cctx.clearRect(0,0,W,H);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function maybeTrigger(){
+    if(fired) return;
+    const now=Date.now();
+    if(now-lastCheck<CHECK_EVERY_MS) return;
+    lastCheck=now;
+    if(scratchedRatio()>=THRESHOLD) launchConfettiOnce();
+  }
+
+  canvas.addEventListener("pointerdown",e=>{
+    down=true; const p=pos(e); scratchAt(p.x,p.y); maybeTrigger();
   });
   canvas.addEventListener("pointermove",e=>{
-    if(!down)return;
-    const p=pos(e);
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,BRUSH,0,Math.PI*2);
-    ctx.fill();
+    if(!down) return; const p=pos(e); scratchAt(p.x,p.y); maybeTrigger();
   });
   ["pointerup","pointerleave","pointercancel"].forEach(ev =>
     canvas.addEventListener(ev,()=>down=false)
   );
 
-  resize();
+  window.addEventListener("resize",resizeAll);
+  resizeAll();
 })();
 </script>
 </body>
